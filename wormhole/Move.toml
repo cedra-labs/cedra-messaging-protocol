@@ -8,10 +8,10 @@ CedraFramework = { git = "https://github.com/cedra-labs/cedra-network.git", subd
 MoveStdlib = { git = "https://github.com/cedra-labs/cedra-network.git", subdir = "cedra-move/framework/move-stdlib/", rev = "6e846b37919bd1c8e773d4248ae221546550596f" }
 CedraStdlib = { git = "https://github.com/cedra-labs/cedra-network.git", subdir = "cedra-move/framework/cedra-stdlib/", rev = "6e846b37919bd1c8e773d4248ae221546550596f" }
 CedraToken = { git = "https://github.com/cedra-labs/cedra-network.git", subdir = "cedra-move/framework/cedra-token/", rev = "6e846b37919bd1c8e773d4248ae221546550596f" }
-Deployer = { git = "https://github.com/cedra-labs/cedra-package-deployer.git"  rev = "259ef0d2fd1e66413d57a52965c8bc239e939489" }
+Deployer = { git = "https://github.com/cedra-labs/cedra-package-deployer.git", rev = "259ef0d2fd1e66413d57a52965c8bc239e939489" }
 
 [dev-dependencies]
-Deployer = { git = "https://github.com/cedra-labs/cedra-package-deployer.git"  rev = "259ef0d2fd1e66413d57a52965c8bc239e939489" }
+Deployer = { git = "https://github.com/cedra-labs/cedra-package-deployer.git", rev = "259ef0d2fd1e66413d57a52965c8bc239e939489" }
 
 [dev-addresses]
 # derived address from sha3_256(deployer | "wormhole" | 0xFF) by running

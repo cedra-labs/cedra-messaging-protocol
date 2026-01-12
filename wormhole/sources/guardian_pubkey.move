@@ -55,7 +55,7 @@ module wormhole::guardian_pubkey {
 #[test_only]
 module wormhole::guardian_pubkey_test {
     use wormhole::guardian_pubkey;
-    use aptos_std::secp256k1::{
+    use cedra_std::secp256k1::{
         ecdsa_raw_public_key_from_64_bytes,
         ecdsa_signature_from_bytes
     };
