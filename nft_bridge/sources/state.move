@@ -8,12 +8,12 @@ module nft_bridge::state {
 
     use cedra_token::token::{Self, TokenId};
 
-    use wormhole::u16::{Self, U16};
-    use wormhole::emitter::EmitterCapability;
-    use wormhole::state;
-    use wormhole::wormhole;
-    use wormhole::set::{Self, Set};
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::u16::{Self, U16};
+    use cedra_message::emitter::EmitterCapability;
+    use cedra_message::state;
+    use cedra_message::cedra_message;
+    use cedra_message::set::{Self, Set};
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     use token_bridge::string32::{Self, String32};
 
@@ -119,7 +119,7 @@ module nft_bridge::state {
     public fun get_origin_info(token_id: &TokenId): (OriginInfo, ExternalAddress) acquires OriginInfo {
         if (is_wrapped_asset(token_id)) {
             let (creator, _, token_name, _) = token::get_token_id_fields(token_id);
-            let external_address = wormhole::external_address::from_bytes(wrapped_token_name::parse_hex(token_name));
+            let external_address = cedra_message::external_address::from_bytes(wrapped_token_name::parse_hex(token_name));
             (*borrow_global<OriginInfo>(creator), external_address)
         } else {
             let token_chain = state::get_chain_id();
@@ -174,7 +174,7 @@ module nft_bridge::state {
         message_fee: Coin<CedraCoin>,
     ): u64 acquires State {
         let emitter_cap = &mut borrow_global_mut<State>(@nft_bridge).emitter_cap;
-        wormhole::publish_message(
+        cedra_message::publish_message(
             emitter_cap,
             nonce,
             payload,

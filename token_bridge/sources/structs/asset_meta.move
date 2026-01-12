@@ -1,11 +1,11 @@
 module token_bridge::asset_meta {
     use std::vector::{Self};
-    use wormhole::serialize::{serialize_u8, serialize_u16, serialize_vector};
-    use wormhole::deserialize::{deserialize_u8, deserialize_u16, deserialize_vector};
-    use wormhole::cursor::{Self};
+    use cedra_message::serialize::{serialize_u8, serialize_u16, serialize_vector};
+    use cedra_message::deserialize::{deserialize_u8, deserialize_u16, deserialize_vector};
+    use cedra_message::cursor::{Self};
 
-    use wormhole::u16::{U16};
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::u16::{U16};
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     use token_bridge::string32::{Self, String32};
 

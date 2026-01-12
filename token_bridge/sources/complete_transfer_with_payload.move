@@ -7,7 +7,7 @@ module token_bridge::complete_transfer_with_payload {
     use token_bridge::wrapped;
     use token_bridge::normalized_amount;
 
-    use wormhole::emitter::{Self, EmitterCapability};
+    use cedra_message::emitter::{Self, EmitterCapability};
 
     const E_INVALID_RECIPIENT: u64 = 0;
     const E_INVALID_TARGET: u64 = 1;
@@ -19,10 +19,10 @@ module token_bridge::complete_transfer_with_payload {
         emitter_cap: &EmitterCapability
     ): (Coin<CoinType>, TransferWithPayload) {
         let vaa = vaa::parse_verify_and_replay_protect(vaa);
-        let transfer = transfer::parse(wormhole::vaa::destroy(vaa));
+        let transfer = transfer::parse(cedra_message::vaa::destroy(vaa));
 
         let to_chain = transfer::get_to_chain(&transfer);
-        assert!(to_chain == wormhole::state::get_chain_id(), E_INVALID_TARGET);
+        assert!(to_chain == cedra_message::state::get_chain_id(), E_INVALID_TARGET);
 
         let token_chain = transfer::get_token_chain(&transfer);
         let token_address = transfer::get_token_address(&transfer);

@@ -11,13 +11,13 @@ module token_bridge::complete_transfer {
     use token_bridge::wrapped;
     use token_bridge::normalized_amount;
 
-    use wormhole::external_address::get_bytes;
+    use cedra_message::external_address::get_bytes;
 
     const E_INVALID_TARGET: u64 = 0;
 
     public fun submit_vaa<CoinType>(vaa: vector<u8>, fee_recipient: address): Transfer {
         let vaa = vaa::parse_verify_and_replay_protect(vaa);
-        let transfer = transfer::parse(wormhole::vaa::destroy(vaa));
+        let transfer = transfer::parse(cedra_message::vaa::destroy(vaa));
         complete_transfer<CoinType>(&transfer, fee_recipient);
         transfer
     }
@@ -43,7 +43,7 @@ module token_bridge::complete_transfer {
 
     fun complete_transfer<CoinType>(transfer: &Transfer, fee_recipient: address) {
         let to_chain = transfer::get_to_chain(transfer);
-        assert!(to_chain == wormhole::state::get_chain_id(), E_INVALID_TARGET);
+        assert!(to_chain == cedra_message::state::get_chain_id(), E_INVALID_TARGET);
 
         let token_chain = transfer::get_token_chain(transfer);
         let token_address = transfer::get_token_address(transfer);
@@ -96,9 +96,9 @@ module token_bridge::complete_transfer_test {
 
     use token_bridge::wrapped_test;
 
-    use wormhole::state;
-    use wormhole::wormhole_test;
-    use wormhole::external_address;
+    use cedra_message::state;
+    use cedra_message::wormhole_test;
+    use cedra_message::external_address;
 
     struct MyCoin {}
 
@@ -121,7 +121,7 @@ module token_bridge::complete_transfer_test {
         decimals: u8,
         amount: u64,
     ) {
-        // initialise wormhole and token bridge
+        // initialise cedra_message and token bridge
         wormhole_test::setup(0);
         token_bridge::init_test(deployer);
 
@@ -286,7 +286,7 @@ module token_bridge::complete_transfer_test {
         setup(deployer, token_bridge, decimals, amount);
 
         let token_address = token_hash::get_external_address(&token_hash::derive<MyCoin>());
-        let token_chain = wormhole::u16::from_u64(10); // FAIL: wrong origin chain (MyCoin is native)
+        let token_chain = cedra_message::u16::from_u64(10); // FAIL: wrong origin chain (MyCoin is native)
         let to_chain = state::get_chain_id();
         let transfer: Transfer = transfer::create(
             normalized_amount::normalize(amount, decimals),
@@ -359,7 +359,7 @@ module token_bridge::complete_transfer_test {
         setup(deployer, token_bridge, decimals, 0);
 
         let token_address = external_address::from_bytes(x"deadbeef");
-        let token_chain = wormhole::u16::from_u64(2);
+        let token_chain = cedra_message::u16::from_u64(2);
         let to_chain = state::get_chain_id();
         let transfer: Transfer = transfer::create(
             normalized_amount::normalize(amount, decimals),

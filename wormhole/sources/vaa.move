@@ -1,13 +1,13 @@
-module wormhole::vaa {
+module cedra_message::vaa {
     use std::vector;
     use cedra_std::secp256k1;
 
-    use wormhole::u16::{U16};
-    use wormhole::u32::{U32};
-    use wormhole::deserialize;
-    use wormhole::cursor;
-    use wormhole::guardian_pubkey;
-    use wormhole::structs::{
+    use cedra_message::u16::{U16};
+    use cedra_message::u32::{U32};
+    use cedra_message::deserialize;
+    use cedra_message::cursor;
+    use cedra_message::guardian_pubkey;
+    use cedra_message::structs::{
         Guardian,
         GuardianSet,
         Signature,
@@ -16,12 +16,12 @@ module wormhole::vaa {
         unpack_signature,
         get_address,
     };
-    use wormhole::state;
-    use wormhole::external_address::{Self, ExternalAddress};
-    use wormhole::keccak256::keccak256;
+    use cedra_message::state;
+    use cedra_message::external_address::{Self, ExternalAddress};
+    use cedra_message::keccak256::keccak256;
 
-    friend wormhole::guardian_set_upgrade;
-    friend wormhole::contract_upgrade;
+    friend cedra_message::guardian_set_upgrade;
+    friend cedra_message::contract_upgrade;
 
     const E_NO_QUORUM: u64 = 0x0;
     const E_TOO_MANY_SIGNATURES: u64 = 0x1;
@@ -230,12 +230,12 @@ module wormhole::vaa {
 }
 
 #[test_only]
-module wormhole::vaa_test {
-    use wormhole::guardian_set_upgrade;
-    use wormhole::wormhole;
-    use wormhole::vaa;
-    use wormhole::structs::{create_guardian};
-    use wormhole::u32;
+module cedra_message::vaa_test {
+    use cedra_message::guardian_set_upgrade;
+    use cedra_message::cedra_message;
+    use cedra_message::vaa;
+    use cedra_message::structs::{create_guardian};
+    use cedra_message::u32;
 
     /// A test VAA signed by the first guardian set (index 0) containing guardian a single
     /// guardian beFA429d57cD18b7F8A4d91A2da9AB4AF05d0FBe
@@ -253,12 +253,12 @@ module wormhole::vaa_test {
     /// 1: 90F8bf6A479f320ead074411a4B0e7944Ea8c9C1
     const GOV_VAA_2: vector<u8> = x"0100000001020052da07c7ba7d58661e22922a1130e75732f454e81086330f9a5337797ee7ee9d703fd55aabc257c4d53d8ab1e471e4eb1f2767bf37cc6d3d6774e2ca3ab429eb00018c9859f14027c2a62563028a2a9bbb30464ce5b86d13728b02fb85b34761d258154bb59bad87908c9b09342efa9045d4420d289bb0144729eb368ec50c45e719010000000100000001000100000000000000000000000000000000000000000000000000000000000000040000000004cdedc90000000000000000000000000000000000000000000000000000000000436f72650100167759324e86f870265b8648ef8d5ef505b2ae99840a616081eb7adc13995204a4";
 
-    /// Set up wormhole with the initial guardian
+    /// Set up cedra_message with the initial guardian
     /// beFA429d57cD18b7F8A4d91A2da9AB4AF05d0FBe
     fun setup() {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        let _wormhole = wormhole::init_test(
+        let _wormhole = cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",
@@ -286,7 +286,7 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 3, location = wormhole::vaa)] // E_GUARDIAN_SET_EXPIRED
+    #[expected_failure(abort_code = 3, location = cedra_message::vaa)] // E_GUARDIAN_SET_EXPIRED
     /// Ensures that the GOV_VAA can no longer be verified after the guardian set
     /// upgrade after expiry
     public fun test_guardian_set_expired() {
@@ -305,7 +305,7 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 8, location = wormhole::vaa)] // E_OLD_GUARDIAN_SET_GOVERNANCE
+    #[expected_failure(abort_code = 8, location = cedra_message::vaa)] // E_OLD_GUARDIAN_SET_GOVERNANCE
     /// Ensures that governance GOV_VAAs can only be verified by the latest guardian
     /// set, even if the signer hasn't expired yet
     public fun test_governance_guardian_set_latest() {
@@ -328,12 +328,12 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 5, location = wormhole::vaa)] // E_INVALID_GOVERNANCE_EMITTER
+    #[expected_failure(abort_code = 5, location = cedra_message::vaa)] // E_INVALID_GOVERNANCE_EMITTER
     /// Ensures that governance GOV_VAAs can only be sent from the correct governance emitter
     public fun test_invalid_governance_emitter() {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        let _wormhole = wormhole::init_test(
+        let _wormhole = cedra_message::init_test(
             22,
             1,
             // Note the different governance emitter address here
@@ -351,12 +351,12 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 4, location = wormhole::vaa)] // E_INVALID_GOVERNANCE_CHAIN
+    #[expected_failure(abort_code = 4, location = cedra_message::vaa)] // E_INVALID_GOVERNANCE_CHAIN
     /// Ensures that governance GOV_VAAs can only be sent from the correct governance chain
     public fun test_invalid_governance_chain() {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        let _wormhole = wormhole::init_test(
+        let _wormhole = cedra_message::init_test(
             22,
             // Note the different governance chain here
             2,
@@ -389,7 +389,7 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 0, location = wormhole::vaa)] // NO_QUORUM
+    #[expected_failure(abort_code = 0, location = cedra_message::vaa)] // NO_QUORUM
     public fun test_no_quorum() {
        setup();
         // do an upgrade
@@ -406,7 +406,7 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 7, location = wormhole::vaa)] // E_NON_INCREASING_SIGNERS
+    #[expected_failure(abort_code = 7, location = cedra_message::vaa)] // E_NON_INCREASING_SIGNERS
     public fun test_double_signed() {
        setup();
         // do an upgrade
@@ -423,7 +423,7 @@ module wormhole::vaa_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 2, location = wormhole::vaa)] // E_INVALID_SIGNATURE
+    #[expected_failure(abort_code = 2, location = cedra_message::vaa)] // E_INVALID_SIGNATURE
     public fun test_out_of_order_signers() {
        setup();
         // do an upgrade

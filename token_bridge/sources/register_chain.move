@@ -1,10 +1,10 @@
 module token_bridge::register_chain {
 
-    use wormhole::u16::{Self, U16};
-    use wormhole::cursor;
-    use wormhole::deserialize;
-    use wormhole::vaa;
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::u16::{Self, U16};
+    use cedra_message::cursor;
+    use cedra_message::deserialize;
+    use cedra_message::vaa;
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     use token_bridge::vaa as token_bridge_vaa;
     use token_bridge::state;
@@ -79,11 +79,11 @@ module token_bridge::register_chain {
 #[test_only]
 module token_bridge::register_chain_test {
     use std::option;
-    use wormhole::u16;
+    use cedra_message::u16;
     use token_bridge::register_chain;
-    use wormhole::vaa;
-    use wormhole::wormhole;
-    use wormhole::external_address;
+    use cedra_message::vaa;
+    use cedra_message::cedra_message;
+    use cedra_message::external_address;
     use token_bridge::token_bridge;
     use token_bridge::state;
 
@@ -101,7 +101,7 @@ module token_bridge::register_chain_test {
     fun setup(deployer: &signer) {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        wormhole::init_test(
+        cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",

@@ -2,7 +2,7 @@
 ///
 /// Contract upgrades are authorised by governance, which means that performing
 /// an upgrade requires a governance VAA signed by a supermajority of the
-/// wormhole guardians.
+/// cedra_message guardians.
 ///
 /// Upgrades are performed in a commit-reveal scheme, where submitting the VAA
 /// authorises a particular contract hash. Then in a subsequent transaction, the
@@ -20,11 +20,11 @@
 module nft_bridge::contract_upgrade {
     use std::vector;
     use cedra_framework::code;
-    use wormhole::deserialize;
-    use wormhole::cursor;
-    use wormhole::vaa;
-    use wormhole::state as core;
-    use wormhole::keccak256::keccak256;
+    use cedra_message::deserialize;
+    use cedra_message::cursor;
+    use cedra_message::vaa;
+    use cedra_message::state as core;
+    use cedra_message::keccak256::keccak256;
 
     use nft_bridge::vaa as nft_bridge_vaa;
     use nft_bridge::state;
@@ -166,7 +166,7 @@ module nft_bridge::contract_upgrade {
 
 #[test_only]
 module nft_bridge::contract_upgrade_test {
-    use wormhole::wormhole;
+    use cedra_message::cedra_message;
 
     use nft_bridge::contract_upgrade;
     use nft_bridge::nft_bridge;
@@ -180,7 +180,7 @@ module nft_bridge::contract_upgrade_test {
     fun setup(deployer: &signer) {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        wormhole::init_test(
+        cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",

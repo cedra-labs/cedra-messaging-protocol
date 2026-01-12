@@ -1,8 +1,8 @@
-/// This module implements upgradeability for the wormhole contract.
+/// This module implements upgradeability for the cedra_message contract.
 ///
 /// Contract upgrades are authorised by governance, which means that performing
 /// an upgrade requires a governance VAA signed by a supermajority of the
-/// wormhole guardians.
+/// cedra_message guardians.
 ///
 /// Upgrades are performed in a commit-reveal scheme, where submitting the VAA
 /// authorises a particular contract hash. Then in a subsequent transaction, the
@@ -17,14 +17,14 @@
 /// logic to be executed after the upgrade. This has to be done in a separate
 /// transaction, because the transaction that uploads bytecode cannot execute
 /// it.
-module wormhole::contract_upgrade {
+module cedra_message::contract_upgrade {
     use std::vector;
     use cedra_framework::code;
-    use wormhole::deserialize;
-    use wormhole::cursor;
-    use wormhole::vaa;
-    use wormhole::state;
-    use wormhole::keccak256::keccak256;
+    use cedra_message::deserialize;
+    use cedra_message::cursor;
+    use cedra_message::vaa;
+    use cedra_message::state;
+    use cedra_message::keccak256::keccak256;
 
     /// "Core" (left padded)
     const CORE: vector<u8> = x"00000000000000000000000000000000000000000000000000000000436f7265";
@@ -90,18 +90,18 @@ module wormhole::contract_upgrade {
     }
 
     fun authorize_upgrade(hash: &Hash) acquires UpgradeAuthorized {
-        let wormhole = state::wormhole_signer();
-        if (exists<UpgradeAuthorized>(@wormhole)) {
+        let cedra_message = state::wormhole_signer();
+        if (exists<UpgradeAuthorized>(@cedra_message)) {
             // TODO(csongor): here we're dropping the upgrade hash, in case an
             // upgrade fails for some reason. Should we emit a log or something?
-            let UpgradeAuthorized { hash: _ } = move_from<UpgradeAuthorized>(@wormhole);
+            let UpgradeAuthorized { hash: _ } = move_from<UpgradeAuthorized>(@cedra_message);
         };
-        move_to(&wormhole, UpgradeAuthorized { hash: hash.hash });
+        move_to(&cedra_message, UpgradeAuthorized { hash: hash.hash });
     }
 
     #[test_only]
     public fun authorized_hash(): vector<u8> acquires UpgradeAuthorized {
-        let u = borrow_global<UpgradeAuthorized>(@wormhole);
+        let u = borrow_global<UpgradeAuthorized>(@cedra_message);
         u.hash
     }
 
@@ -112,8 +112,8 @@ module wormhole::contract_upgrade {
         metadata_serialized: vector<u8>,
         code: vector<vector<u8>>
     ) acquires UpgradeAuthorized {
-        assert!(exists<UpgradeAuthorized>(@wormhole), E_UPGRADE_UNAUTHORIZED);
-        let UpgradeAuthorized { hash } = move_from<UpgradeAuthorized>(@wormhole);
+        assert!(exists<UpgradeAuthorized>(@cedra_message), E_UPGRADE_UNAUTHORIZED);
+        let UpgradeAuthorized { hash } = move_from<UpgradeAuthorized>(@cedra_message);
 
         // we compute the hash of hashes of the metadata and the bytecodes.
         // the cedra framework appears to perform no validation of the metadata,
@@ -124,12 +124,12 @@ module wormhole::contract_upgrade {
         while (!vector::is_empty(&c)) vector::append(&mut a, keccak256(vector::pop_back(&mut c)));
         assert!(keccak256(a) == hash, E_UNEXPECTED_HASH);
 
-        let wormhole = state::wormhole_signer();
-        code::publish_package_txn(&wormhole, metadata_serialized, code);
+        let cedra_message = state::wormhole_signer();
+        code::publish_package_txn(&cedra_message, metadata_serialized, code);
 
         // allow migration to be run.
-        if (!exists<Migrating>(@wormhole)) {
-            move_to(&wormhole, Migrating {});
+        if (!exists<Migrating>(@cedra_message)) {
+            move_to(&cedra_message, Migrating {});
         }
     }
 
@@ -139,12 +139,12 @@ module wormhole::contract_upgrade {
     struct Migrating has key {}
 
     public fun is_migrating(): bool {
-        exists<Migrating>(@wormhole)
+        exists<Migrating>(@cedra_message)
     }
 
     public entry fun migrate() acquires Migrating {
-        assert!(exists<Migrating>(@wormhole), E_NOT_MIGRATING);
-        let Migrating { } = move_from<Migrating>(@wormhole);
+        assert!(exists<Migrating>(@cedra_message), E_NOT_MIGRATING);
+        let Migrating { } = move_from<Migrating>(@cedra_message);
 
         // NOTE: put any one-off migration logic here.
         // Most upgrades likely won't need to do anything, in which case the
@@ -160,16 +160,16 @@ module wormhole::contract_upgrade {
 }
 
 #[test_only]
-module wormhole::contract_upgrade_test {
-    use wormhole::contract_upgrade;
-    use wormhole::wormhole;
+module cedra_message::contract_upgrade_test {
+    use cedra_message::contract_upgrade;
+    use cedra_message::cedra_message;
 
     const UPGRADE_VAA: vector<u8> = x"010000000001000da16466429ee8ffb09b90ca90db8326d20cfeeae0542da9dcaaad641a5aca2d6c1fe33a5970ca84fd0ff5e6d29ef9e40404eb1a8892b509f085fc725b9e23a30100000001000000010001000000000000000000000000000000000000000000000000000000000000000400000000020b10360000000000000000000000000000000000000000000000000000000000436f7265010016d8f30e4a345ea0fa5df11daac4e1866ee368d253209cf9eda012d915a2db09e6";
 
     fun setup() {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        wormhole::init_test(
+        cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",

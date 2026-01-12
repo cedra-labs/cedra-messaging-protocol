@@ -12,7 +12,7 @@ module token_bridge::attest_token {
     const E_WRAPPED_ASSET: u64 = 1;
 
     public entry fun attest_token_entry<CoinType>(user: &signer) {
-        let message_fee = wormhole::state::get_message_fee();
+        let message_fee = cedra_message::state::get_message_fee();
         let fee_coins = coin::withdraw<CedraCoin>(user, message_fee);
         attest_token<CoinType>(fee_coins);
     }
@@ -43,7 +43,7 @@ module token_bridge::attest_token {
             // if native asset is not registered, register it in the reverse look-up map
             state::set_native_asset_type_info<CoinType>();
         };
-        let token_chain = wormhole::state::get_chain_id();
+        let token_chain = cedra_message::state::get_chain_id();
         let decimals = coin::decimals<CoinType>();
         let symbol = string32::from_string(&coin::symbol<CoinType>());
         let name = string32::from_string(&coin::name<CoinType>());
@@ -79,8 +79,8 @@ module token_bridge::attest_token_test {
     ) {
         // we initialise the bridge with zero fees to avoid having to mint fee
         // tokens in these tests. The wormolhe fee handling is already tested
-        // in wormhole.move, so it's unnecessary here.
-        wormhole::wormhole_test::setup(0);
+        // in cedra_message.move, so it's unnecessary here.
+        cedra_message::wormhole_test::setup(0);
         bridge::init_test(deployer);
 
         init_my_token(token_bridge);
@@ -111,7 +111,7 @@ module token_bridge::attest_token_test {
         let name = string32::to_string(&asset_meta::get_name(&asset_meta));
 
         assert!(token_address == token_hash::get_external_address(&token_hash::derive<MyCoin>()), 0);
-        assert!(token_chain == wormhole::u16::from_u64(22), 0);
+        assert!(token_chain == cedra_message::u16::from_u64(22), 0);
         assert!(decimals == 10, 0);
         assert!(name == string::utf8(b"Some test coin"), 0);
         assert!(symbol == string::utf8(b"TEST"), 0);

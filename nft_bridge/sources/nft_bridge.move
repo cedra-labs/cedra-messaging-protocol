@@ -4,7 +4,7 @@ module nft_bridge::nft_bridge {
     use cedra_framework::account::{SignerCapability};
     use deployer::deployer::{claim_signer_capability};
     use nft_bridge::state::{init_nft_bridge_state};
-    use wormhole::wormhole;
+    use cedra_message::cedra_message;
 
     /// Initializes the contract.
     entry fun init_module(deployer: &signer) {
@@ -13,13 +13,13 @@ module nft_bridge::nft_bridge {
     }
 
     fun init_internal(signer_cap: SignerCapability) {
-        let emitter_cap = wormhole::register_emitter();
+        let emitter_cap = cedra_message::register_emitter();
         init_nft_bridge_state(signer_cap, emitter_cap);
     }
 
     #[test_only]
     /// Initialise contracts for testing
-    /// Returns the nft_bridge signer and wormhole signer
+    /// Returns the nft_bridge signer and cedra_message signer
     public fun init_test(deployer: &signer) {
         let (_nft_bridge, signer_cap) = account::create_resource_account(deployer, b"nft_bridge");
         init_internal(signer_cap);

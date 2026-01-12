@@ -2,7 +2,7 @@ module token_bridge::wrapped {
     use cedra_framework::account;
     use cedra_framework::coin::{Self, Coin, MintCapability, BurnCapability, FreezeCapability};
 
-    use wormhole::vaa;
+    use cedra_message::vaa;
 
     use token_bridge::state;
     use token_bridge::asset_meta::{Self, AssetMeta};
@@ -161,9 +161,9 @@ module token_bridge::wrapped_test {
 
     use token_bridge::register_chain;
 
-    use wormhole::u16::{Self};
+    use cedra_message::u16::{Self};
     use wrapped_coin::coin::T;
-    use wormhole::external_address::{Self};
+    use cedra_message::external_address::{Self};
 
     /// Registration VAA for the ethereum token bridge 0xdeadbeef
     const ETHEREUM_TOKEN_REG: vector<u8> = x"0100000000010015d405c74be6d93c3c33ed6b48d8db70dfb31e0981f8098b2a6c7583083e0c3343d4a1abeb3fc1559674fa067b0c0e2e9de2fafeaecdfeae132de2c33c9d27cc0100000001000000010001000000000000000000000000000000000000000000000000000000000000000400000000016911ae00000000000000000000000000000000000000000000546f6b656e427269646765010000000200000000000000000000000000000000000000000000000000000000deadbeef";
@@ -174,12 +174,12 @@ module token_bridge::wrapped_test {
     fun setup(
         deployer: &signer,
     ) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         bridge::init_test(deployer);
     }
 
     public fun init_wrapped_token() {
-        let chain = wormhole::u16::from_u64(2);
+        let chain = cedra_message::u16::from_u64(2);
         let token_address = external_address::from_bytes(x"deadbeef");
         let asset_meta = asset_meta::create(
             token_address,

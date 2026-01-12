@@ -7,8 +7,8 @@ module nft_bridge::token_hash {
     use std::string;
     use std::vector;
 
-    use wormhole::serialize;
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::serialize;
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     /// Hash of (creator || hash(collection name)), which uniquely identifies a
     /// collection on Cedra

@@ -1,8 +1,8 @@
-module wormhole::serialize {
+module cedra_message::serialize {
     use std::vector;
-    use wormhole::u16::{Self, U16};
-    use wormhole::u32::{Self, U32};
-    use wormhole::u256::U256;
+    use cedra_message::u16::{Self, U16};
+    use cedra_message::u32::{Self, U32};
+    use cedra_message::u256::U256;
 
     // we reuse the native bcs serialiser -- it uses little-endian encoding, and
     // we need big-endian, so the results are reversed
@@ -50,13 +50,13 @@ module wormhole::serialize {
 }
 
 #[test_only]
-module wormhole::test_serialize {
-    use wormhole::serialize;
-    use wormhole::deserialize;
-    use wormhole::cursor;
-    use wormhole::u32;
-    use wormhole::u16;
-    use wormhole::u256;
+module cedra_message::test_serialize {
+    use cedra_message::serialize;
+    use cedra_message::deserialize;
+    use cedra_message::cursor;
+    use cedra_message::u32;
+    use cedra_message::u16;
+    use cedra_message::u256;
     use std::vector;
 
     #[test]

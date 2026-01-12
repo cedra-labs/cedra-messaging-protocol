@@ -1,16 +1,16 @@
 /// TODO(csongor): document
 /// TODO(csongor): should we rename emitter to something else? It's used in a
 /// couple of places to authenticate contracts
-module wormhole::emitter {
+module cedra_message::emitter {
 
-    use wormhole::serialize;
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::serialize;
+    use cedra_message::external_address::{Self, ExternalAddress};
 
-    friend wormhole::state;
-    friend wormhole::wormhole;
+    friend cedra_message::state;
+    friend cedra_message::cedra_message;
 
     #[test_only]
-    friend wormhole::emitter_test;
+    friend cedra_message::emitter_test;
 
     const E_INVALID_EMITTER_UPGRADE: u64 = 0;
 
@@ -38,7 +38,7 @@ module wormhole::emitter {
     struct EmitterCapability has store {
         /// Unique identifier of the emitter
         emitter: u64,
-        /// Sequence number of the next wormhole message
+        /// Sequence number of the next cedra_message message
         sequence: u64
     }
 
@@ -71,8 +71,8 @@ module wormhole::emitter {
 }
 
 #[test_only]
-module wormhole::emitter_test {
-    use wormhole::emitter;
+module cedra_message::emitter_test {
+    use cedra_message::emitter;
 
     #[test]
     public fun test_increasing_emitters() {

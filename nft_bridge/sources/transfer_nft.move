@@ -4,8 +4,8 @@ module nft_bridge::transfer_nft {
     use cedra_framework::coin::{Self, Coin};
     use cedra_token::token::{Self, Token};
 
-    use wormhole::u16::{Self, U16};
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::u16::{Self, U16};
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     use nft_bridge::state;
     use nft_bridge::transfer;
@@ -28,7 +28,7 @@ module nft_bridge::transfer_nft {
     ) {
         let token_id = token::create_token_id_raw(creators_address, collection, name, property_version);
         let token = token::withdraw_token(sender, token_id, 1);
-        let wormhole_fee = wormhole::state::get_message_fee();
+        let wormhole_fee = cedra_message::state::get_message_fee();
         let wormhole_fee_coins: Coin<CedraCoin>;
         if (wormhole_fee > 0) {
             wormhole_fee_coins = coin::withdraw<CedraCoin>(sender, wormhole_fee);
@@ -204,7 +204,7 @@ module nft_bridge::transfer_nft_test {
     // test transfer wrapped NFT to another chain
     #[test(deployer = @deployer, sender = @0x123456)]
     public fun test_transfer_wrapped_nft(deployer: &signer, sender: &signer) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         cedra_framework::cedra_account::create_account(signer::address_of(sender));
@@ -261,7 +261,7 @@ module nft_bridge::transfer_nft_test {
     #[test(deployer = @deployer, creator = @0x654321, sender = @0x123456)]
     public fun test_transfer_native_nft(deployer: &signer, creator: address, sender: &signer) {
         // ------ Setup
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         cedra_framework::cedra_account::create_account(signer::address_of(sender));

@@ -1,18 +1,18 @@
 module token_bridge::transfer_with_payload {
     use std::vector;
-    use wormhole::serialize::{
+    use cedra_message::serialize::{
         serialize_u8,
         serialize_u16,
         serialize_vector,
     };
-    use wormhole::deserialize::{
+    use cedra_message::deserialize::{
         deserialize_u8,
         deserialize_u16,
     };
-    use wormhole::cursor;
+    use cedra_message::cursor;
 
-    use wormhole::u16::U16;
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::u16::U16;
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     use token_bridge::normalized_amount::{Self, NormalizedAmount};
 

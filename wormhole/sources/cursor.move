@@ -1,4 +1,4 @@
-module wormhole::cursor {
+module cedra_message::cursor {
     use std::vector;
 
     /// A cursor allows consuming a vector incrementally for parsing operations.

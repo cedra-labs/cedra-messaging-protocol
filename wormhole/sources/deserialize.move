@@ -1,9 +1,9 @@
-module wormhole::deserialize {
+module cedra_message::deserialize {
     use std::vector;
-    use wormhole::cursor::{Self, Cursor};
-    use wormhole::u16::{Self, U16};
-    use wormhole::u32::{Self, U32};
-    use wormhole::u256::{Self, U256};
+    use cedra_message::cursor::{Self, Cursor};
+    use cedra_message::u16::{Self, U16};
+    use cedra_message::u32::{Self, U32};
+    use cedra_message::u256::{Self, U256};
 
     public fun deserialize_u8(cur: &mut Cursor<u8>): u8 {
         cursor::poke(cur)
@@ -71,11 +71,11 @@ module wormhole::deserialize {
 }
 
 #[test_only]
-module wormhole::deserialize_test {
-    use wormhole::cursor;
-    use wormhole::u16;
-    use wormhole::u32;
-    use wormhole::deserialize::{
+module cedra_message::deserialize_test {
+    use cedra_message::cursor;
+    use cedra_message::u16;
+    use cedra_message::u32;
+    use cedra_message::deserialize::{
         deserialize_u8,
         deserialize_u16,
         deserialize_u32,

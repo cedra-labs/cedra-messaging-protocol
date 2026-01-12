@@ -6,12 +6,12 @@ module token_bridge::state {
     use cedra_framework::cedra_coin::CedraCoin;
     use cedra_framework::coin::Coin;
 
-    use wormhole::u16::U16;
-    use wormhole::emitter::EmitterCapability;
-    use wormhole::state;
-    use wormhole::wormhole;
-    use wormhole::set::{Self, Set};
-    use wormhole::external_address::ExternalAddress;
+    use cedra_message::u16::U16;
+    use cedra_message::emitter::EmitterCapability;
+    use cedra_message::state;
+    use cedra_message::cedra_message;
+    use cedra_message::set::{Self, Set};
+    use cedra_message::external_address::ExternalAddress;
 
     use token_bridge::token_hash::{Self, TokenHash};
 
@@ -160,7 +160,7 @@ module token_bridge::state {
         message_fee: Coin<CedraCoin>,
     ): u64 acquires State {
         let emitter_cap = &mut borrow_global_mut<State>(@token_bridge).emitter_cap;
-        wormhole::publish_message(
+        cedra_message::publish_message(
             emitter_cap,
             nonce,
             payload,

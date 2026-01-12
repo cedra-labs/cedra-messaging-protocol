@@ -1,10 +1,10 @@
-module wormhole::structs {
-    use wormhole::u32::{Self, U32};
+module cedra_message::structs {
+    use cedra_message::u32::{Self, U32};
     use std::secp256k1;
     use std::timestamp;
 
-    friend wormhole::state;
-    use wormhole::guardian_pubkey::{Self};
+    friend cedra_message::state;
+    use cedra_message::guardian_pubkey::{Self};
 
     struct Signature has key, store, copy, drop {
         sig: secp256k1::ECDSASignature,

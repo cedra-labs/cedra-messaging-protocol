@@ -1,7 +1,7 @@
 /// Guardian keys are EVM-style 20 byte addresses
 /// That is, they are computed by taking the last 20 bytes of the keccak256
 /// hash of their 64 byte secp256k1 public key.
-module wormhole::guardian_pubkey {
+module cedra_message::guardian_pubkey {
     use cedra_std::secp256k1::{
         ECDSARawPublicKey,
         ECDSASignature,
@@ -9,7 +9,7 @@ module wormhole::guardian_pubkey {
         ecdsa_recover,
     };
     use std::vector;
-    use wormhole::keccak256::keccak256;
+    use cedra_message::keccak256::keccak256;
 
     /// An error occurred while deserializing, for example due to wrong input size.
     const E_DESERIALIZE: u64 = 1;
@@ -53,8 +53,8 @@ module wormhole::guardian_pubkey {
 }
 
 #[test_only]
-module wormhole::guardian_pubkey_test {
-    use wormhole::guardian_pubkey;
+module cedra_message::guardian_pubkey_test {
+    use cedra_message::guardian_pubkey;
     use cedra_std::secp256k1::{
         ecdsa_raw_public_key_from_64_bytes,
         ecdsa_signature_from_bytes

@@ -1,19 +1,19 @@
-module wormhole::state {
+module cedra_message::state {
     use std::table::{Self, Table};
     use std::event::{Self, EventHandle};
     use std::account;
     use std::timestamp;
-    use wormhole::structs::{Self, GuardianSet};
-    use wormhole::u16::{U16};
-    use wormhole::u32::{Self, U32};
-    use wormhole::emitter;
-    use wormhole::set::{Self, Set};
-    use wormhole::external_address::{ExternalAddress};
+    use cedra_message::structs::{Self, GuardianSet};
+    use cedra_message::u16::{U16};
+    use cedra_message::u32::{Self, U32};
+    use cedra_message::emitter;
+    use cedra_message::set::{Self, Set};
+    use cedra_message::external_address::{ExternalAddress};
 
-    friend wormhole::guardian_set_upgrade;
-    friend wormhole::contract_upgrade;
-    friend wormhole::wormhole;
-    friend wormhole::vaa;
+    friend cedra_message::guardian_set_upgrade;
+    friend cedra_message::contract_upgrade;
+    friend cedra_message::cedra_message;
+    friend cedra_message::vaa;
 
     struct GuardianSetChanged has store, drop {
         oldGuardianIndex: U32,
@@ -38,7 +38,7 @@ module wormhole::state {
     }
 
     struct WormholeState has key {
-        /// This chain's wormhole id
+        /// This chain's cedra_message id
         chain_id: U16,
 
         /// Governance chain's id
@@ -61,7 +61,7 @@ module wormhole::state {
 
         message_fee: u64,
 
-        /// The signer capability for wormhole itself
+        /// The signer capability for cedra_message itself
         signer_cap: account::SignerCapability,
 
         /// Capability for creating new emitters
@@ -70,7 +70,7 @@ module wormhole::state {
 
     //create some empty tables and stuff...
     public(friend) fun init_wormhole_state(
-        wormhole: &signer,
+        cedra_message: &signer,
         chain_id: U16,
         governance_chain_id: U16,
         governance_contract: ExternalAddress,
@@ -78,7 +78,7 @@ module wormhole::state {
         message_fee: u64,
         signer_cap: account::SignerCapability
     ) {
-        move_to(wormhole, WormholeState {
+        move_to(cedra_message, WormholeState {
             chain_id,
             governance_chain_id,
             governance_contract,
@@ -115,7 +115,7 @@ module wormhole::state {
         nonce: u64,
         payload: vector<u8>,
      ) acquires WormholeMessageHandle {
-        let event_handle = borrow_global_mut<WormholeMessageHandle>(@wormhole);
+        let event_handle = borrow_global_mut<WormholeMessageHandle>(@cedra_message);
         let now = cedra_framework::timestamp::now_seconds();
 
         event::emit_event<WormholeMessage>(
@@ -134,24 +134,24 @@ module wormhole::state {
     }
 
     public(friend) fun update_guardian_set_index(new_index: U32) acquires WormholeState {
-        let state = borrow_global_mut<WormholeState>(@wormhole);
+        let state = borrow_global_mut<WormholeState>(@cedra_message);
         state.guardian_set_index= new_index;
     }
 
     public fun get_guardian_set(index: U32): GuardianSet acquires WormholeState {
-        let state = borrow_global_mut<WormholeState>(@wormhole);
+        let state = borrow_global_mut<WormholeState>(@cedra_message);
         *table::borrow<u64, GuardianSet>(&mut state.guardian_sets, u32::to_u64(index))
     }
 
     public(friend) fun expire_guardian_set(index: U32) acquires WormholeState {
-        let state = borrow_global_mut<WormholeState>(@wormhole);
+        let state = borrow_global_mut<WormholeState>(@cedra_message);
         let guardian_set: &mut GuardianSet = table::borrow_mut<u64, GuardianSet>(&mut state.guardian_sets, u32::to_u64(index));
         let expiry = state.guardian_set_expiry;
         structs::expire_guardian_set(guardian_set, expiry);
     }
 
     public(friend) fun store_guardian_set(set: GuardianSet) acquires WormholeState {
-        let state = borrow_global_mut<WormholeState>(@wormhole);
+        let state = borrow_global_mut<WormholeState>(@cedra_message);
         let index: u64 = u32::to_u64(structs::get_guardian_set_index(&set));
         table::add(&mut state.guardian_sets, index, set);
     }
@@ -166,63 +166,63 @@ module wormhole::state {
     }
 
     public(friend) fun set_governance_action_consumed(hash: vector<u8>) acquires WormholeState {
-        let state = borrow_global_mut<WormholeState>(@wormhole);
+        let state = borrow_global_mut<WormholeState>(@cedra_message);
         set::add(&mut state.consumed_governance_actions, hash);
     }
 
     public(friend) fun set_chain_id(chain_id: U16) acquires WormholeState {
-        borrow_global_mut<WormholeState>(@wormhole).chain_id = chain_id;
+        borrow_global_mut<WormholeState>(@cedra_message).chain_id = chain_id;
     }
 
     public(friend) fun set_governance_chain_id(chain_id: U16) acquires WormholeState {
-        borrow_global_mut<WormholeState>(@wormhole).governance_chain_id = chain_id;
+        borrow_global_mut<WormholeState>(@cedra_message).governance_chain_id = chain_id;
     }
 
     public(friend) fun set_governance_contract(governance_contract: ExternalAddress) acquires WormholeState {
-        borrow_global_mut<WormholeState>(@wormhole).governance_contract = governance_contract;
+        borrow_global_mut<WormholeState>(@cedra_message).governance_contract = governance_contract;
     }
 
     public(friend) fun set_message_fee(new_fee: u64) acquires WormholeState {
-        borrow_global_mut<WormholeState>(@wormhole).message_fee = new_fee;
+        borrow_global_mut<WormholeState>(@cedra_message).message_fee = new_fee;
     }
 
     // getters
 
     public fun get_current_guardian_set_index(): U32 acquires WormholeState {
-        let state = borrow_global<WormholeState>(@wormhole);
+        let state = borrow_global<WormholeState>(@cedra_message);
         state.guardian_set_index
     }
 
     public fun get_current_guardian_set(): GuardianSet acquires WormholeState {
-        let state = borrow_global<WormholeState>(@wormhole);
+        let state = borrow_global<WormholeState>(@cedra_message);
         let ind = u32::to_u64(state.guardian_set_index);
         *table::borrow(&state.guardian_sets, ind)
     }
 
     public fun get_governance_contract(): ExternalAddress acquires WormholeState {
-        borrow_global<WormholeState>(@wormhole).governance_contract
+        borrow_global<WormholeState>(@cedra_message).governance_contract
     }
 
     public fun get_governance_chain(): U16 acquires WormholeState {
-        borrow_global<WormholeState>(@wormhole).governance_chain_id
+        borrow_global<WormholeState>(@cedra_message).governance_chain_id
     }
 
     public fun get_chain_id(): U16 acquires WormholeState {
-        borrow_global<WormholeState>(@wormhole).chain_id
+        borrow_global<WormholeState>(@cedra_message).chain_id
     }
 
     public fun get_message_fee(): u64 acquires WormholeState {
-        borrow_global<WormholeState>(@wormhole).message_fee
+        borrow_global<WormholeState>(@cedra_message).message_fee
     }
 
-    /// Provide access to the wormhole contract signer. Be *very* careful who
+    /// Provide access to the cedra_message contract signer. Be *very* careful who
     /// gets access to this!
     public(friend) fun wormhole_signer(): signer acquires WormholeState {
-        account::create_signer_with_capability(&borrow_global<WormholeState>(@wormhole).signer_cap)
+        account::create_signer_with_capability(&borrow_global<WormholeState>(@cedra_message).signer_cap)
     }
 
     public(friend) fun new_emitter(): emitter::EmitterCapability acquires WormholeState {
-        let registry = &mut borrow_global_mut<WormholeState>(@wormhole).emitter_registry;
+        let registry = &mut borrow_global_mut<WormholeState>(@cedra_message).emitter_registry;
         emitter::new_emitter(registry)
     }
 }

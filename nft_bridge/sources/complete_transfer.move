@@ -10,15 +10,15 @@ module nft_bridge::complete_transfer {
 
     use token_bridge::string32;
 
-    use wormhole::state as wormhole_state;
-    use wormhole::external_address;
+    use cedra_message::state as wormhole_state;
+    use cedra_message::external_address;
 
     const E_INVALID_TARGET: u64 = 0;
     const E_INVALID_TOKEN_ADDRESS: u64 = 1;
 
     public fun submit_vaa(vaa: vector<u8>): Transfer {
         let vaa = vaa::parse_verify_and_replay_protect(vaa);
-        let transfer = transfer::parse(wormhole::vaa::destroy(vaa));
+        let transfer = transfer::parse(cedra_message::vaa::destroy(vaa));
         complete_transfer(&transfer);
         transfer
     }
@@ -41,7 +41,7 @@ module nft_bridge::complete_transfer {
 
     fun complete_transfer(transfer: &Transfer) {
         let to_chain = transfer::get_to_chain(transfer);
-        assert!(to_chain == wormhole::state::get_chain_id(), E_INVALID_TARGET);
+        assert!(to_chain == cedra_message::state::get_chain_id(), E_INVALID_TARGET);
 
         let token_chain = transfer::get_token_chain(transfer);
         let token_id = transfer::get_token_id(transfer);
@@ -85,8 +85,8 @@ module nft_bridge::complete_transfer_test {
     use cedra_framework::account;
     use cedra_token::token;
 
-    use wormhole::external_address::{Self, ExternalAddress};
-    use wormhole::u16;
+    use cedra_message::external_address::{Self, ExternalAddress};
+    use cedra_message::u16;
 
     use token_bridge::string32;
 
@@ -104,7 +104,7 @@ module nft_bridge::complete_transfer_test {
     // Test that complete_transfer for wrapped token works
     #[test(deployer = @deployer, recipient = @0x1234)]
     public fun test_complete_transfer_wrapped_asset(deployer: &signer, recipient: address) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         let recipient_signer = cedra_framework::account::create_account_for_test(recipient);
@@ -120,7 +120,7 @@ module nft_bridge::complete_transfer_test {
         recipient1: address,
         recipient2: address
     ) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         let recipient_signer1 = cedra_framework::account::create_account_for_test(recipient1);
@@ -135,7 +135,7 @@ module nft_bridge::complete_transfer_test {
         deployer: &signer,
         recipient: address,
     ) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         let recipient_signer = cedra_framework::account::create_account_for_test(recipient);
@@ -174,7 +174,7 @@ module nft_bridge::complete_transfer_test {
         deployer: &signer,
         recipient: address,
     ) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         let recipient_signer = cedra_framework::account::create_account_for_test(recipient);
@@ -218,7 +218,7 @@ module nft_bridge::complete_transfer_test {
     // Test that multiple tokens can be minted from the same collection
     #[test(deployer=@deployer, recipient=@0x1234)]
     public fun test_complete_transfer_wrapped_asset_multiple_tokens(deployer: &signer, recipient: address) {
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         let recipient = cedra_framework::account::create_account_for_test(recipient);
@@ -381,7 +381,7 @@ module nft_bridge::complete_transfer_test {
         target_chain: u64
     ) {
         // ------ Setup
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         nft_bridge::nft_bridge::init_test(deployer);
 
         cedra_framework::cedra_account::create_account(signer::address_of(first_user));

@@ -1,6 +1,6 @@
 module token_bridge::transfer_result {
-    use wormhole::u16::U16;
-    use wormhole::external_address::ExternalAddress;
+    use cedra_message::u16::U16;
+    use cedra_message::external_address::ExternalAddress;
 
     use token_bridge::normalized_amount::NormalizedAmount;
 

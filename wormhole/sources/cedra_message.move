@@ -1,15 +1,15 @@
-module wormhole::wormhole {
+module cedra_message::cedra_message {
     use std::vector;
     use cedra_framework::account;
     use cedra_framework::coin::{Self, Coin};
     use cedra_framework::cedra_coin::{CedraCoin};
-    use wormhole::structs::{create_guardian, create_guardian_set, Guardian};
-    use wormhole::state;
+    use cedra_message::structs::{create_guardian, create_guardian_set, Guardian};
+    use cedra_message::state;
     use deployer::deployer;
-    use wormhole::u16;
-    use wormhole::u32::{Self, U32};
-    use wormhole::emitter;
-    use wormhole::external_address::{Self};
+    use cedra_message::u16;
+    use cedra_message::u32::{Self, U32};
+    use cedra_message::emitter;
+    use cedra_message::external_address::{Self};
     use std::signer;
 
     const E_INSUFFICIENT_FEE: u64 = 0;
@@ -26,8 +26,8 @@ module wormhole::wormhole {
         // ensure that provided fee is sufficient to cover message fees
         let expected_fee = state::get_message_fee();
         assert!(expected_fee <= coin::value(&message_fee), E_INSUFFICIENT_FEE);
-        // deposit the fees into the wormhole account
-        coin::deposit(@wormhole, message_fee);
+        // deposit the fees into the cedra_message account
+        coin::deposit(@cedra_message, message_fee);
         let sequence = emitter::use_sequence(emitter_cap);
         state::publish_event(
             emitter::get_emitter(emitter_cap),
@@ -63,7 +63,7 @@ module wormhole::wormhole {
         // account::SignerCapability can't be copied, so once it's stored into
         // state, the init function can no longer be called (since
         // the deployer signer capability must have been unlocked).
-        let signer_cap = deployer::claim_signer_capability(deployer, @wormhole);
+        let signer_cap = deployer::claim_signer_capability(deployer, @cedra_message);
         let message_fee = 0;
         let guardians: vector<Guardian> = vector[];
 
@@ -92,9 +92,9 @@ module wormhole::wormhole {
         guardian_set_expiry: U32,
         message_fee: u64,
     ) {
-        let wormhole = account::create_signer_with_capability(&signer_cap);
+        let cedra_message = account::create_signer_with_capability(&signer_cap);
         state::init_wormhole_state(
-            &wormhole,
+            &cedra_message,
             u16::from_u64(chain_id),
             u16::from_u64(governance_chain_id),
             external_address::from_bytes(governance_contract),
@@ -102,25 +102,25 @@ module wormhole::wormhole {
             message_fee,
             signer_cap
         );
-        state::init_message_handles(&wormhole);
+        state::init_message_handles(&cedra_message);
         state::store_guardian_set(
             create_guardian_set(
                 u32::from_u64(0),
                 initial_guardians
             )
         );
-        // register wormhole to be able to receive fees
+        // register cedra_message to be able to receive fees
         // `cedra_account::create_account` is a permissionless operation that
         // performs cedra coin registration too, so it's possible that this is
         // already performed, in which case we just skip
         // (thanks ottersec for point this out)
-        if (!coin::is_account_registered<CedraCoin>(signer::address_of(&wormhole))) {
-            coin::register<CedraCoin>(&wormhole);
+        if (!coin::is_account_registered<CedraCoin>(signer::address_of(&cedra_message))) {
+            coin::register<CedraCoin>(&cedra_message);
         };
     }
 
     #[test_only]
-    /// Initialise a dummy contract for testing. Returns the wormhole signer.
+    /// Initialise a dummy contract for testing. Returns the cedra_message signer.
     public fun init_test(
         chain_id: u64,
         governance_chain_id: u64,
@@ -129,7 +129,7 @@ module wormhole::wormhole {
         message_fee: u64,
     ): signer {
         let deployer = account::create_account_for_test(@deployer);
-        let (wormhole, signer_cap) = account::create_resource_account(&deployer, b"wormhole");
+        let (cedra_message, signer_cap) = account::create_resource_account(&deployer, b"cedra_message");
         init_internal(
             signer_cap,
             chain_id,
@@ -139,15 +139,15 @@ module wormhole::wormhole {
             u32::from_u64(86400),
             message_fee
         );
-        wormhole
+        cedra_message
     }
 }
 
 #[test_only]
-module wormhole::wormhole_test {
+module cedra_message::wormhole_test {
     use std::hash;
-    use wormhole::wormhole;
-    use wormhole::keccak256::keccak256;
+    use cedra_message::cedra_message;
+    use cedra_message::keccak256::keccak256;
     use cedra_framework::cedra_coin::{Self};
     use cedra_framework::coin;
 
@@ -155,7 +155,7 @@ module wormhole::wormhole_test {
     public fun setup(message_fee: u64) {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        wormhole::init_test(
+        cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",
@@ -177,9 +177,9 @@ module wormhole::wormhole_test {
         let (burn_cap, mint_cap) = cedra_coin::initialize_for_test(cedra_framework);
         let fees = coin::mint(100, &mint_cap);
 
-        let emitter_cap = wormhole::register_emitter();
+        let emitter_cap = cedra_message::register_emitter();
 
-        wormhole::publish_message(
+        cedra_message::publish_message(
             &mut emitter_cap,
             0,
             b"hi mom",
@@ -188,23 +188,23 @@ module wormhole::wormhole_test {
 
         //TODO - check if event is actually emitted?
 
-        wormhole::emitter::destroy_emitter_cap(emitter_cap);
+        cedra_message::emitter::destroy_emitter_cap(emitter_cap);
         coin::destroy_mint_cap(mint_cap);
         coin::destroy_burn_cap(burn_cap);
     }
 
     #[test]
-    #[expected_failure(abort_code = 0x0, location = wormhole::wormhole)]
+    #[expected_failure(abort_code = 0x0, location = cedra_message::cedra_message)]
     public fun test_publish_message_insufficient_fee() {
         setup(100);
-        let emitter_cap = wormhole::register_emitter();
+        let emitter_cap = cedra_message::register_emitter();
 
-        wormhole::publish_message(
+        cedra_message::publish_message(
             &mut emitter_cap,
             0,
             b"hi mom",
             coin::zero()
         );
-        wormhole::emitter::destroy_emitter_cap(emitter_cap);
+        cedra_message::emitter::destroy_emitter_cap(emitter_cap);
     }
 }

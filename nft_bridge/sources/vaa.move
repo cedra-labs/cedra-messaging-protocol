@@ -1,7 +1,7 @@
 /// Token Bridge VAA utilities
 module nft_bridge::vaa {
     use std::option;
-    use wormhole::vaa::{Self, VAA};
+    use cedra_message::vaa::{Self, VAA};
     use nft_bridge::state;
 
     friend nft_bridge::complete_transfer;
@@ -59,10 +59,10 @@ module nft_bridge::vaa_test {
     use nft_bridge::state;
     use nft_bridge::nft_bridge;
 
-    use wormhole::vaa as core_vaa;
-    use wormhole::wormhole;
-    use wormhole::u16;
-    use wormhole::external_address;
+    use cedra_message::vaa as core_vaa;
+    use cedra_message::cedra_message;
+    use cedra_message::u16;
+    use cedra_message::external_address;
 
     /// VAA sent from the ethereum token bridge 0xdeadbeef
     const VAA: vector<u8> = x"01000000000100102d399190fa61daccb11c2ea4f7a3db3a9365e5936bcda4cded87c1b9eeb095173514f226256d5579af71d4089eb89496befb998075ba94cd1d4460c5c57b84000000000100000001000200000000000000000000000000000000000000000000000000000000deadbeef0000000002634973000200000000000000000000000000000000000000000000000000000000beefface00020c0000000000000000000000000000000000000000000000000000000042454546000000000000000000000000000000000042656566206661636520546f6b656e";
@@ -70,7 +70,7 @@ module nft_bridge::vaa_test {
     fun setup(deployer: &signer) {
         let cedra_framework = std::account::create_account_for_test(@cedra_framework);
         std::timestamp::set_time_has_started_for_testing(&cedra_framework);
-        wormhole::init_test(
+        cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",

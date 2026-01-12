@@ -1,5 +1,5 @@
 /// A set data structure.
-module wormhole::set {
+module cedra_message::set {
     use cedra_std::table::{Self, Table};
 
     /// Empty struct. Used as the value type in mappings to encode a set

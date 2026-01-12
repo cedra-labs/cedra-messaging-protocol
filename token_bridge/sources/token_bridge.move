@@ -4,7 +4,7 @@ module token_bridge::token_bridge {
     use cedra_framework::account::{SignerCapability};
     use deployer::deployer::{claim_signer_capability};
     use token_bridge::state::{init_token_bridge_state};
-    use wormhole::wormhole;
+    use cedra_message::cedra_message;
 
     /// Initializes the contract.
     /// The native `init_module` cannot be used, because it runs on each upgrade
@@ -19,13 +19,13 @@ module token_bridge::token_bridge {
     }
 
     fun init_internal(signer_cap: SignerCapability) {
-        let emitter_cap = wormhole::register_emitter();
+        let emitter_cap = cedra_message::register_emitter();
         init_token_bridge_state(signer_cap, emitter_cap);
     }
 
     #[test_only]
     /// Initialise contracts for testing
-    /// Returns the token_bridge signer and wormhole signer
+    /// Returns the token_bridge signer and cedra_message signer
     public fun init_test(deployer: &signer) {
         let (_token_bridge, signer_cap) = account::create_resource_account(deployer, b"token_bridge");
         init_internal(signer_cap);

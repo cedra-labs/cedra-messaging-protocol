@@ -5,7 +5,7 @@ module token_bridge::token_hash {
     use std::hash;
     use std::string;
 
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     struct TokenHash has drop, copy, store {
         // 32 bytes
@@ -28,7 +28,7 @@ module token_bridge::token_hash {
 #[test_only]
 module token_bridge::token_hash_test {
     use token_bridge::token_hash;
-    use wormhole::external_address;
+    use cedra_message::external_address;
     use wrapped_coin::coin;
 
     use std::type_info;

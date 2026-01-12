@@ -1,16 +1,16 @@
 module token_bridge::transfer {
     use std::vector;
-    use wormhole::serialize::{
+    use cedra_message::serialize::{
         serialize_u8,
         serialize_u16,
     };
-    use wormhole::deserialize::{
+    use cedra_message::deserialize::{
         deserialize_u8,
         deserialize_u16,
     };
-    use wormhole::cursor;
-    use wormhole::external_address::{Self, ExternalAddress};
-    use wormhole::u16::U16;
+    use cedra_message::cursor;
+    use cedra_message::external_address::{Self, ExternalAddress};
+    use cedra_message::u16::U16;
 
     use token_bridge::normalized_amount::{Self, NormalizedAmount};
 
@@ -119,8 +119,8 @@ module token_bridge::transfer {
 module token_bridge::transfer_test {
     use token_bridge::transfer;
     use token_bridge::normalized_amount;
-    use wormhole::external_address;
-    use wormhole::u16;
+    use cedra_message::external_address;
+    use cedra_message::u16;
 
     #[test]
     public fun parse_roundtrip() {

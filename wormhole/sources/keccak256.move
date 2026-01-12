@@ -1,4 +1,4 @@
-module wormhole::keccak256 {
+module cedra_message::keccak256 {
     use cedra_framework::cedra_hash;
 
     spec module {

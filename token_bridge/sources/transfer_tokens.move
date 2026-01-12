@@ -4,9 +4,9 @@ module token_bridge::transfer_tokens {
 
     use std::signer;
 
-    use wormhole::u16::{Self, U16};
-    use wormhole::external_address::{Self, ExternalAddress};
-    use wormhole::emitter::{Self, EmitterCapability};
+    use cedra_message::u16::{Self, U16};
+    use cedra_message::external_address::{Self, ExternalAddress};
+    use cedra_message::emitter::{Self, EmitterCapability};
 
     use token_bridge::state;
     use token_bridge::transfer;
@@ -26,7 +26,7 @@ module token_bridge::transfer_tokens {
         nonce: u64
     ) {
         let coins = coin::withdraw<CoinType>(sender, amount);
-        let wormhole_fee = wormhole::state::get_message_fee();
+        let wormhole_fee = cedra_message::state::get_message_fee();
         let wormhole_fee_coins = coin::withdraw<CedraCoin>(sender, wormhole_fee);
         transfer_tokens<CoinType>(
             coins,
@@ -78,7 +78,7 @@ module token_bridge::transfer_tokens {
         if (is_emitter_registered(signer::address_of(sender))) {
             return
         };
-        let emitter_cap = wormhole::wormhole::register_emitter();
+        let emitter_cap = cedra_message::cedra_message::register_emitter();
         move_to<EmitterCapabilityStore>(
             sender,
             EmitterCapabilityStore { emitter_cap }
@@ -99,7 +99,7 @@ module token_bridge::transfer_tokens {
             borrow_global<EmitterCapabilityStore>(signer::address_of(sender));
 
         let coins = coin::withdraw<CoinType>(sender, amount);
-        let wormhole_fee = wormhole::state::get_message_fee();
+        let wormhole_fee = cedra_message::state::get_message_fee();
         let wormhole_fee_coins = coin::withdraw<CedraCoin>(sender, wormhole_fee);
         transfer_tokens_with_payload<CoinType>(
             emitter_cap,
@@ -215,7 +215,7 @@ module token_bridge::transfer_tokens_test {
     use token_bridge::register_chain;
     use token_bridge::normalized_amount;
 
-    use wormhole::external_address::{Self};
+    use cedra_message::external_address::{Self};
 
     use wrapped_coin::coin::T;
 
@@ -274,10 +274,10 @@ module token_bridge::transfer_tokens_test {
         deployer: &signer,
     ) {
         // we initialise the bridge with zero fees to avoid having to mint fee
-        // tokens in these tests. The wormhole fee handling is already tested
-        // in wormhole.move, so it's unnecessary here.
+        // tokens in these tests. The cedra_message fee handling is already tested
+        // in cedra_message.move, so it's unnecessary here.
         let (burn_cap, mint_cap) = cedra_coin::initialize_for_test(cedra_framework);
-        wormhole::wormhole_test::setup(0);
+        cedra_message::wormhole_test::setup(0);
         bridge::init_test(deployer);
 
         coin::register<CedraCoin>(deployer);
@@ -311,7 +311,7 @@ module token_bridge::transfer_tokens_test {
         // make sure the wrapped assets have been burned
         assert!(coin::supply<T>() == std::option::some(0), 0);
 
-        assert!(token_chain == wormhole::u16::from_u64(2), 0);
+        assert!(token_chain == cedra_message::u16::from_u64(2), 0);
         assert!(external_address::get_bytes(&token_address) == x"00000000000000000000000000000000000000000000000000000000beefface", 0);
         // the original coin has 12 decimals, but wrapped assets are capped at 8
         // decimals, so the normalized amount matches the transferred amount.
@@ -356,7 +356,7 @@ module token_bridge::transfer_tokens_test {
         let (token_chain, token_address, normalized_amount, normalized_relayer_fee)
             = transfer_result::destroy(result);
 
-        assert!(token_chain == wormhole::state::get_chain_id(), 0);
+        assert!(token_chain == cedra_message::state::get_chain_id(), 0);
         assert!(token_address == token_hash::get_external_address(&token_hash::derive<MyCoin>()), 0);
         // the coin has 6 decimals, so the amount doesn't get scaled
         assert!(normalized_amount::get_amount(normalized_amount) == 10000, 0);

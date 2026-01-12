@@ -7,9 +7,9 @@ module nft_bridge::uri {
     use std::string::{Self, String};
     use std::vector;
 
-    use wormhole::cursor::Cursor;
-    use wormhole::deserialize;
-    use wormhole::serialize;
+    use cedra_message::cursor::Cursor;
+    use cedra_message::deserialize;
+    use cedra_message::serialize;
 
     const MAX_LENGTH: u64 = 200;
 
@@ -94,9 +94,9 @@ module nft_bridge::uri_test {
         let uri = uri::from_bytes(b"hello world");
         let vec = std::vector::empty();
         uri::serialize(&mut vec, uri);
-        let c = wormhole::cursor::init(vec);
+        let c = cedra_message::cursor::init(vec);
         let uri2 = uri::deserialize(&mut c);
-        wormhole::cursor::destroy_empty(c);
+        cedra_message::cursor::destroy_empty(c);
         assert!(uri == uri2, 0);
     }
 }

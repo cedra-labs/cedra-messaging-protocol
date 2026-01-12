@@ -1,4 +1,4 @@
-module wormhole::u32 {
+module cedra_message::u32 {
 
     const MAX_U32: u64 = (1 << 32) - 1;
 

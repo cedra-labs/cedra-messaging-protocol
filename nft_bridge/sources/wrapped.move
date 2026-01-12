@@ -7,8 +7,8 @@ module nft_bridge::wrapped {
     use cedra_framework::account;
     use cedra_token::token;
 
-    use wormhole::serialize;
-    use wormhole::external_address::{Self, ExternalAddress};
+    use cedra_message::serialize;
+    use cedra_message::external_address::{Self, ExternalAddress};
 
     use token_bridge::string32::{Self, String32};
 
@@ -165,8 +165,8 @@ module nft_bridge::wrapped_test {
 
     use cedra_token::token;
 
-    use wormhole::external_address;
-    use wormhole::u16;
+    use cedra_message::external_address;
+    use cedra_message::u16;
 
     use token_bridge::string32;
 

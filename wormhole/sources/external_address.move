@@ -1,11 +1,11 @@
 /// 32 byte, left-padded address representing an arbitrary address, to be used in VAAs to
 /// refer to addresses.
-module wormhole::external_address {
+module cedra_message::external_address {
     use std::vector;
 
-    use wormhole::cursor::Cursor;
-    use wormhole::deserialize;
-    use wormhole::serialize;
+    use cedra_message::cursor::Cursor;
+    use cedra_message::deserialize;
+    use cedra_message::serialize;
 
     const E_VECTOR_TOO_LONG: u64 = 0;
 
@@ -51,8 +51,8 @@ module wormhole::external_address {
 }
 
 #[test_only]
-module wormhole::external_address_test {
-    use wormhole::external_address::{get_bytes, left_pad, from_bytes, pad_left_32};
+module cedra_message::external_address_test {
+    use cedra_message::external_address::{get_bytes, left_pad, from_bytes, pad_left_32};
     use cedra_framework::vector::{Self};
 
     // test get_bytes and left_pad
@@ -75,7 +75,7 @@ module wormhole::external_address_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 0, location = wormhole::external_address)]
+    #[expected_failure(abort_code = 0, location = cedra_message::external_address)]
     public fun test_left_pad_vector_too_long() {
         let v = x"123456789123456789123456789123451234567891234567891234567891234500"; //33 bytes
         let res = left_pad(&v);
@@ -94,7 +94,7 @@ module wormhole::external_address_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 0, location = wormhole::external_address)]
+    #[expected_failure(abort_code = 0, location = cedra_message::external_address)]
     public fun test_from_bytes_over_32_bytes() {
         let v = x"00000000000000000000000000000000000000000000000000000000000000001234";
         let ea = from_bytes(v);
@@ -116,7 +116,7 @@ module wormhole::external_address_test {
     }
 
     #[test]
-    #[expected_failure(abort_code = 0, location = wormhole::external_address)]
+    #[expected_failure(abort_code = 0, location = cedra_message::external_address)]
     fun test_pad_left_long() {
         let v = x"665555555555555555555555555555555555555555555555555555555555555555";
         pad_left_32(&v);

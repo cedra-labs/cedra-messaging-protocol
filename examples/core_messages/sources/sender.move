@@ -1,17 +1,17 @@
-/// A simple contracts that demonstrates how to send messages with wormhole.
+/// A simple contracts that demonstrates how to send messages with cedra_message.
 module core_messages::sender {
-    use wormhole::wormhole;
+    use cedra_message::cedra_message;
     use cedra_framework::coin;
 
     struct State has key {
-        emitter_cap: wormhole::emitter::EmitterCapability,
+        emitter_cap: cedra_message::emitter::EmitterCapability,
     }
 
     entry fun init_module(core_messages: &signer) {
-        // Register ourselves as a wormhole emitter. This gives back an
+        // Register ourselves as a cedra_message emitter. This gives back an
         // `EmitterCapability` which will be required to send messages through
-        // wormhole.
-        let emitter_cap = wormhole::register_emitter();
+        // cedra_message.
+        let emitter_cap = cedra_message::register_emitter();
         move_to(core_messages, State { emitter_cap });
     }
 
@@ -34,10 +34,10 @@ module core_messages::sender {
         // only batch VAAs)
         let nonce: u64 = 0;
 
-        let message_fee = wormhole::state::get_message_fee();
+        let message_fee = cedra_message::state::get_message_fee();
         let fee_coins = coin::withdraw(user, message_fee);
 
-        let _sequence = wormhole::publish_message(
+        let _sequence = cedra_message::publish_message(
             emitter_cap,
             nonce,
             payload,
@@ -48,7 +48,7 @@ module core_messages::sender {
 
 #[test_only]
 module core_messages::sender_test {
-    use wormhole::wormhole;
+    use cedra_message::cedra_message;
     use core_messages::sender;
     use cedra_framework::account;
     use cedra_framework::cedra_coin::{Self, CedraCoin};
@@ -60,7 +60,7 @@ module core_messages::sender_test {
     public fun test_send_message(cedra_framework: &signer, user: &signer) {
         let message_fee = 100;
         timestamp::set_time_has_started_for_testing(cedra_framework);
-        wormhole::init_test(
+        cedra_message::init_test(
             22,
             1,
             x"0000000000000000000000000000000000000000000000000000000000000004",
