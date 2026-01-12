@@ -18,5 +18,5 @@ cedra_message = "c745ffa4f97fa9739fae0cb173996f70bb8e4b0310fa781ccca2f7dc13f7db0
 deployer = "c745ffa4f97fa9739fae0cb173996f70bb8e4b0310fa781ccca2f7dc13f7db06"
 
 [addresses]
-cedra_message = "c745ffa4f97fa9739fae0cb173996f70bb8e4b0310fa781ccca2f7dc13f7db06"
-deployer = "c745ffa4f97fa9739fae0cb173996f70bb8e4b0310fa781ccca2f7dc13f7db06"
+cedra_message = "_"
+deployer = "_"
